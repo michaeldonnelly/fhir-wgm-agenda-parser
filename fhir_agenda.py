@@ -1,5 +1,3 @@
-#editor.replace("ALCOHOL LICENSE REVIEW COMMITTEE","ALRC")
-
 import re
 
 def header():
@@ -9,14 +7,13 @@ def agendaLine(text,quarter):
 	if len(text) < 1:
 		return ""
 	if text[0:1] == "=":
-		return ""    #"##STRIPLINE##"
+		return ""
 	if text[0:3] == "'''": 
 		return sessionLine(text,quarter)
 	else:
 		return contentLine(text)
 
 def sessionLine(text, quarter):
-	#print text
 	session = text.split(" - ")
 	
 	out = []
@@ -36,12 +33,6 @@ def sessionLine(text, quarter):
 	except IndexError:
 		out.append("")
 	
-
-	
-	#text = text.replace("'''", "")
-	#text = text.replace(" - ", "\t")
-	
-	#return "\r\n" + "\t".join(out)
 	return "\t".join(out) + "\t"
 	
 def contentLine(text):
@@ -78,8 +69,8 @@ def workgroups(groups):
 	groups = groups.replace("Sec", "Security")
 	groups = groups.replace("SOA", "Service Oriented Architecture")
 	groups = groups.replace("Temp", "Templates")
-	#groups = groups.replace("Voc", "Vocabulary")
-	#groups = groups.replace("SD", "Structured Documents")
+	#groups = groups.replace("Voc", "Vocabulary")	 # often already written out
+	#groups = groups.replace("SD", "Structured Documents")	# false positives
 	groups = groups.replace("OO", "Orders & Observations")
 	groups = groups.replace("PH", "Public Health, Emergency Response")
 	groups = groups.replace("Pharm", "Pharmacy")
@@ -97,7 +88,7 @@ file.close()
 text = text.replace("\t", "   ")
 output = [header()]
 textArray = text.split("\r\n")
-quarter = "huh"
+quarter = ""
 for line in textArray:
 	if line[0:2] == "==":
 		quarter = line.split("==")[1]
@@ -105,25 +96,15 @@ for line in textArray:
 	else:
 		output.append(agendaLine(line, quarter))
 
-#text.replace("''' - ", "\t")
-#text = text.replace("''' - ", "\t")
-#text = text.replace("PA", "Patient Administration")
-
-text = "foo"
-
 text = "\r\n".join(output)
 
 text = text.replace("\r\n#STRIPCRBEFORE#; ", "")
 text = text.replace("\r\n#STRIPCRBEFORE#", "")
 text = text.replace("; \r\n", "\r\n")
-#text = text.replace("##STRIPLINE##\r\n", "\r\n")
 text = text.replace("\r\n\r\n", "\r\n")
 text = text.replace("\r\n\r\n", "\r\n")
-#text = text.replace("\r\n\r\n", "\r\n")
 text = text.replace("#NEWSECTION#","\r\n" + header())
 
 resultFile = open('fhir.after.tsv','w')
 resultFile.write(text)
 resultFile.close()
-
-
